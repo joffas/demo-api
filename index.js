@@ -2,7 +2,7 @@ require('dotenv-safe').load();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const port = 3000; //porta padrão
+const port = 8000; //porta padrão
 const verifyJWT = require('./lib/lib').verifyJWT;
 
 //configurando o body parser para pegar POSTS mais tarde
