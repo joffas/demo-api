@@ -4,7 +4,7 @@
   "description": "Tutorial de node com mysql",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Testando\""
+      "start": "node ./index.js"
   },
   "author": "Joffas",
   "license": "ISC",
