@@ -3,8 +3,6 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3000; //porta padrão
-var router = express.Router();
-
 
 //configurando o body parser para pegar POSTS mais tarde
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,17 +20,10 @@ app.use(function(req, res, next) {
   }
 });
 
-router.get('/', function(req, res, next) {
-  res.send('teste herokito');
-});
-app.use('/', router);
-
-// const NAME_SPACE = '/v1';
-// app.use(NAME_SPACE, require('./app/controllers/token'));
-// app.use(NAME_SPACE, verifyJWT, require('./app/controllers/usuario'));
-// app.use(NAME_SPACE, verifyJWT, require('./app/controllers/pessoa'));
-
-//app.use('/clientes', router); nao precisa no caso de estar em baixo
+ const NAME_SPACE = '/v1';
+ app.use(NAME_SPACE, require('./app/controllers/token'));
+ app.use(NAME_SPACE, require('./app/controllers/usuario'));
+ app.use(NAME_SPACE, require('./app/controllers/pessoa'));
 
 //inicia o servidor
 app.listen(port);
