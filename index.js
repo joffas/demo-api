@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const port = 8000; //porta padrão
+var router = express.Router();
 
 
 //configurando o body parser para pegar POSTS mais tarde
@@ -20,6 +21,11 @@ app.use(function(req, res, next) {
     next();
   }
 });
+
+router.get('/', function(req, res, next) {
+  res.send('teste herokito');
+});
+app.use('/', router);
 
 // const NAME_SPACE = '/v1';
 // app.use(NAME_SPACE, require('./app/controllers/token'));
