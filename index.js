@@ -1,4 +1,4 @@
-require('dotenv-safe').load();
+// require('dotenv-safe').load();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
