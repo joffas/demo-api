@@ -2,7 +2,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const port = 8000; //porta padrão
+const port = 3000; //porta padrão
 var router = express.Router();
 
 
