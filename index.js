@@ -1,8 +1,9 @@
-// require('dotenv-safe').load();
+require('dotenv-safe').load();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const port = process.env.PORT || 3000; //porta padrão
+const port = 3000; //porta padrão
+const verifyJWT = require('./lib/lib').verifyJWT;
 
 //configurando o body parser para pegar POSTS mais tarde
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,10 +21,12 @@ app.use(function(req, res, next) {
   }
 });
 
- const NAME_SPACE = '/v1';
- app.use(NAME_SPACE, require('./app/controllers/token'));
- app.use(NAME_SPACE, require('./app/controllers/usuario'));
- app.use(NAME_SPACE, require('./app/controllers/pessoa'));
+const NAME_SPACE = '/v1';
+app.use(NAME_SPACE, require('./app/controllers/token'));
+app.use(NAME_SPACE, verifyJWT, require('./app/controllers/usuario'));
+app.use(NAME_SPACE, verifyJWT, require('./app/controllers/pessoa'));
+
+//app.use('/clientes', router); nao precisa no caso de estar em baixo
 
 //inicia o servidor
 app.listen(port);
