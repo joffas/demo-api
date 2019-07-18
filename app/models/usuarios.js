@@ -1,10 +1,17 @@
+const Sequelize = require('sequelize');
+const { Model } = Sequelize;
+
 module.exports = (sequelize, DataTypes) => {
-  const Usuario = sequelize.define('Usuario', {
+  class Usuario extends Model {}
+
+  Usuario.init({
     nome: DataTypes.STRING,
     email: DataTypes.STRING,
     senha: DataTypes.STRING,
+  }, {
+    sequelize,
+    modelName: 'usuario'
   });
 
-  Usuario.logging = false;
   return Usuario;
 }

@@ -2,22 +2,22 @@ const Sequelize = require('sequelize');
 const { Model } = Sequelize;
 
 module.exports = (sequelize, DataTypes) => {
+  class Estado extends Model {
 
-  class Pessoa extends Model {
+
     static associate({ Municipio }) {
-      //Pessoa.belongsTo(Estado);
-      Pessoa.belongsTo(Municipio);
+      Estado.hasMany(Municipio);
     }
+
   }
 
-  Pessoa.init({
+  Estado.init({
     nome: DataTypes.STRING,
-    email: DataTypes.STRING,
-    documento: DataTypes.STRING,
+    sigla: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'pessoa'
+    modelName: 'estado'
   });
 
-  return Pessoa;
+  return Estado;
 }

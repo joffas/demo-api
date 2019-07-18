@@ -23,8 +23,15 @@ app.use(function(req, res, next) {
 
 const NAME_SPACE = '/v1';
 app.use(NAME_SPACE, require('./app/controllers/token'));
+// app.use(NAME_SPACE, verifyJWT,
+//   require('./app/controllers/usuario'),
+//   require('./app/controllers/estado'),
+//   require('./app/controllers/pessoa')
+// );
+app.use(NAME_SPACE, verifyJWT, require('./app/controllers/estado'));
 app.use(NAME_SPACE, verifyJWT, require('./app/controllers/usuario'));
 app.use(NAME_SPACE, verifyJWT, require('./app/controllers/pessoa'));
+app.use(NAME_SPACE, verifyJWT, require('./app/controllers/municipio'));
 
 //app.use('/clientes', router); nao precisa no caso de estar em baixo
 
