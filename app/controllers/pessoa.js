@@ -3,10 +3,16 @@ const express = require('express');
 const { serialize } = require('../schemas/application');
 const rotas = express.Router();
 const { Pessoa, Estado, Municipio } = require('../models');
+const { Op } = require('Sequelize');
 //Rotas Pessoas
 
 rotas.get('/pessoas', (req, res, next) => {
+
+  const where = (req.query.nome) ? { [Op.or]: [ {nome: { [Op.like]: `%${req.query.nome}%` }}, {email:  { [Op.like]: `%${req.query.nome}%` } } ] } : null;
+  req.query.nome;
   Pessoa.findAll({
+    where
+    ,
     include: [ { model: Municipio, include: [{ model: Estado }] } ],
     order: [[ 'nome', 'DESC' ]] })
     .then(pessoas => {
@@ -52,12 +58,12 @@ rotas.patch('/pessoas/:id', async (req, res) => {
 })
 
 rotas.post('/pessoas', async (req, res) =>{
-  const { body: { data: { attributes: { nome, email, documento }, relationships: { estado: { data: { id: estadoId } } } } } } = req;
+  const { body: { data: { attributes: { nome, email, documento }, relationships: { municipio: { data: { id: municipioId } } } } } } = req;
   try {
-    const results = await Pessoa.create({nome, email, documento, estadoId},
+    const results = await Pessoa.create({nome, email, documento, municipioId},
       {
         include: [{
-          model: Estado
+          model: Municipio
         }]
       });
     res.status(200).send( serialize('pessoa', results.toJSON() ) );
