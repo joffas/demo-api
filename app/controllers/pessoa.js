@@ -6,13 +6,31 @@ const { Pessoa, Estado, Municipio } = require('../models');
 const { Op } = require('Sequelize');
 //Rotas Pessoas
 
-rotas.get('/pessoas', (req, res, next) => {
+function whereRegistro(req){
+  return { [Op.and]: [ {registroId: req.registroId } ]};
+}
 
-  const where = (req.query.nome) ? { [Op.or]: [ {nome: { [Op.like]: `%${req.query.nome}%` }}, {email:  { [Op.like]: `%${req.query.nome}%` } } ] } : null;
+async function getPessoa(req) {
+  try {
+    return await Pessoa.findOne({ where: [{id: req.params.id}, whereRegistro(req)] });
+  } catch(error) {
+    return error;
+  }
+}
+
+function getStatusNaoAutorizado(mesagem){
+  const detail = mesagem ? mesagem: 'Não autorizado!';
+  return { "errors": [ {"status": "403", detail } ] };
+  //res.status(403).send( getStatusNaoAutorizado('nao autorizo vc!') );
+}
+
+rotas.get('/pessoas', (req, res, next) => {
+  console.log('pessoas get');
+  const wherePesquisa = (req.query.nome) ?
+      { [Op.or]: [ {nome: { [Op.like]: `%${req.query.nome}%` }}, {email:  { [Op.like]: `%${req.query.nome}%` } } ] }  : null;
   req.query.nome;
   Pessoa.findAll({
-    where
-    ,
+    where: [ whereRegistro(req), wherePesquisa ],
     include: [ { model: Municipio, include: [{ model: Estado }] } ],
     order: [[ 'nome', 'DESC' ]] })
     .then(pessoas => {
@@ -26,11 +44,17 @@ rotas.get('/pessoas', (req, res, next) => {
 })
 
 rotas.get('/pessoas/:id', (req, res) => {
-  Pessoa.findByPk(req.params.id, {
+  console.log('pessoa get');
+  Pessoa.findOne({
+    where: [{id: req.params.id}, whereRegistro(req)],
     include: [ { model: Municipio, include: [{ model: Estado }] } ]
   })
     .then(pessoa => {
-      res.status(200).send( serialize('pessoa', pessoa.toJSON()) );
+      if (pessoa){
+        res.status(200).send( serialize('pessoa', pessoa.toJSON()) );
+      } else {
+        res.status(403).send( getStatusNaoAutorizado('Pessoa não encontrada!') );
+      }
     })
     .catch(error => {
       console.log('no '+error);
@@ -39,6 +63,7 @@ rotas.get('/pessoas/:id', (req, res) => {
 })
 
 rotas.patch('/pessoas/:id', async (req, res) => {
+  console.log('path');
   const { body: { data: { id, attributes: { nome, email, documento },
     relationships: {
       // estado: { data: { id: estadoId } },
@@ -46,11 +71,14 @@ rotas.patch('/pessoas/:id', async (req, res) => {
   } } } } = req;
   // Nova forma de esperar a promessa com await (async na f)
   try {
-    const pessoa = await Pessoa.findByPk(id);
-    await pessoa.update({ nome, email, documento, municipioId });
-    const pessoaAtualizada = await Pessoa.findByPk(id, { include: [ { model: Municipio, include: [{ model: Estado }] } ]
-    });
-    res.status(200).send( serialize('pessoa', pessoaAtualizada.toJSON() ) );
+    const pessoa = await Pessoa.findByPk(req.params.id );
+    if (pessoa.registroId==req.registroId){
+      await pessoa.update({ nome, email, documento, municipioId });
+      const pessoaAtualizada = await Pessoa.findByPk(id, { include: [ { model: Municipio, include: [{ model: Estado }] } ] });
+      res.status(200).send( serialize('pessoa', pessoaAtualizada.toJSON() ) );
+    } else {
+      res.status(403).send( getStatusNaoAutorizado() );
+    }
   } catch(error) {
     console.log('no '+error);
     res.status(401).send({ error });
@@ -59,8 +87,9 @@ rotas.patch('/pessoas/:id', async (req, res) => {
 
 rotas.post('/pessoas', async (req, res) =>{
   const { body: { data: { attributes: { nome, email, documento }, relationships: { municipio: { data: { id: municipioId } } } } } } = req;
+  const registroId = req.registroId;
   try {
-    const results = await Pessoa.create({nome, email, documento, municipioId},
+    const results = await Pessoa.create({nome, email, documento, municipioId, registroId},
       {
         include: [{
           model: Municipio
@@ -76,7 +105,11 @@ rotas.post('/pessoas', async (req, res) =>{
 rotas.delete('/pessoas/:id', (req, res) =>{
   Pessoa.findByPk(req.params.id)
     .then(pessoa => {
-      return pessoa.destroy();
+      if (pessoa.registroId==req.registroId){
+        return pessoa.destroy();
+      } else {
+        res.status(403).send( getStatusNaoAutorizado() );
+      }
     })
     .then(pessoa => {
       res.status(200).send( serialize('pessoa', pessoa.toJSON() ) );

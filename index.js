@@ -11,7 +11,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 
 app.use(function(req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type, authorization');
   if (req.method === 'OPTIONS') {
@@ -22,16 +23,21 @@ app.use(function(req, res, next) {
 });
 
 const NAME_SPACE = '/v1';
-app.use(NAME_SPACE, require('./app/controllers/token'));
-// app.use(NAME_SPACE, verifyJWT,
-//   require('./app/controllers/usuario'),
-//   require('./app/controllers/estado'),
-//   require('./app/controllers/pessoa')
-// );
-app.use(NAME_SPACE, verifyJWT, require('./app/controllers/estado'));
-app.use(NAME_SPACE, verifyJWT, require('./app/controllers/usuario'));
-app.use(NAME_SPACE, verifyJWT, require('./app/controllers/pessoa'));
-app.use(NAME_SPACE, verifyJWT, require('./app/controllers/municipio'));
+app.use(NAME_SPACE,
+  require('./app/controllers/token'),
+  verifyJWT,
+  require('./app/controllers/estado'),
+  require('./app/controllers/usuario'),
+  require('./app/controllers/pessoa'),
+  require('./app/controllers/municipio'),
+  require('./app/controllers/me')
+  );
+
+// app.use(NAME_SPACE, require('./app/controllers/estado'));
+// app.use(NAME_SPACE, require('./app/controllers/usuario'));
+// app.use(NAME_SPACE, require('./app/controllers/pessoa'));
+// app.use(NAME_SPACE, require('./app/controllers/municipio'));
+// app.use(NAME_SPACE, require('./app/controllers/me'));
 
 //app.use('/clientes', router); nao precisa no caso de estar em baixo
 

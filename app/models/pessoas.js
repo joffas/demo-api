@@ -4,8 +4,8 @@ const { Model } = Sequelize;
 module.exports = (sequelize, DataTypes) => {
 
   class Pessoa extends Model {
-    static associate({ Municipio }) {
-      //Pessoa.belongsTo(Estado);
+    static associate({ Municipio, Registro }) {
+      Pessoa.belongsTo(Registro);
       Pessoa.belongsTo(Municipio);
     }
   }

@@ -3,12 +3,9 @@ const { Model } = Sequelize;
 
 module.exports = (sequelize, DataTypes) => {
   class Estado extends Model {
-
-
     static associate({ Municipio }) {
       Estado.hasMany(Municipio);
     }
-
   }
 
   Estado.init({
