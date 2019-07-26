@@ -16,13 +16,11 @@ const { Usuario } = require('../models');
 // })
 
 rotas.get('/usuarios', (req, res, next) => {
-  console.log('usuarios get');
   Usuario.findAll()
     .then(usuarios => {
       res.status(200).send( serialize('usuario', usuarios.map((usuario) => usuario.toJSON() ) ) );
     })
     .catch(error => {
-      console.log('no '+error);
       res.status(401).send({ error });
     })
 })

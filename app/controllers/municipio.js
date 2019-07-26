@@ -13,7 +13,6 @@ rotas.get('/municipios', (req, res, next) => {
       res.status(200).send( serialize('municipio', results) );
     })
     .catch(error => {
-      console.log('no '+error);
       res.status(401).send({ error });
     });
 })
@@ -24,7 +23,6 @@ rotas.get('/municipios/:id', (req, res) => {
       res.status(200).send( serialize('municipio', result) );
     })
     .catch(error => {
-      console.log('no '+error);
       res.status(401).send({ error });
     });
 })

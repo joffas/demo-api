@@ -39,7 +39,7 @@ rotas.get('/pessoas', (req, res, next) => {
     })
     .catch(error => {
       console.log('no '+error);
-      res.status(401).send({ error });
+      res.status(403).send({ error });
     });
 })
 
