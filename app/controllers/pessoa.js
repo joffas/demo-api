@@ -4,11 +4,8 @@ const { serialize } = require('../schemas/application');
 const rotas = express.Router();
 const { Pessoa, Estado, Municipio } = require('../models');
 const { Op } = require('Sequelize');
+const { whereRegistro } = require('./index.js');
 //Rotas Pessoas
-
-function whereRegistro(req){
-  return { [Op.and]: [ {registroId: req.registroId } ]};
-}
 
 async function getPessoa(req) {
   try {

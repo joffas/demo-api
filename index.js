@@ -25,8 +25,8 @@ app.use(function(req, res, next) {
 const NAME_SPACE = '/v1';
 app.use(NAME_SPACE,
   require('./app/controllers/token'),
-  require('./app/controllers/report'),
   verifyJWT,
+  require('./app/controllers/report'),
   require('./app/controllers/estado'),
   require('./app/controllers/usuario'),
   require('./app/controllers/pessoa'),

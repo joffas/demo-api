@@ -3,15 +3,16 @@ const express = require('express');
 const { serialize } = require('../schemas/application');
 const rotas = express.Router();
 const { Pessoa } = require('../models');
+const { whereRegistro, fileNameTmp } = require('./index.js');
 
 rotas.get('/reports', (req, res, next) => {
   const path = "D:\\xampp\\htdocs\\";
-  const fileName = "relatorio.pdf";
+  const fileName = fileNameTmp(req);
 
   var wkhtmltopdf = require('wkhtmltopdf');
   var fs = require("fs");
 
-  Pessoa.findAll()
+  Pessoa.findAll({ where: whereRegistro(req) })
     .then(pessoas => {
       let resultado = '<html>';
       resultado = '<h1>Listagem de Contatos</h1>';
@@ -19,6 +20,7 @@ rotas.get('/reports', (req, res, next) => {
            return pessoa.nome;
         }).join('<br>');
       resultado += '</html>';
+      console.log(resultado);
 
       wkhtmltopdf(resultado, {
         output: path+fileName,
