@@ -2,13 +2,16 @@ require('dotenv-safe').load();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const port = 3000; //porta padrão
+const path = require('path');
+const port = process.env.PORT || 3000; //porta padrão
 const verifyJWT = require('./lib/lib').verifyJWT;
 
 //configurando o body parser para pegar POSTS mais tarde
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
+app.use(express.static(path.join(__dirname, 'public')));
+//console.log(__dirname);
 
 app.use(function(req, res, next) {
   //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');

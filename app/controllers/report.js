@@ -20,12 +20,20 @@ rotas.get('/reports', (req, res, next) => {
     where: [ whereRegistro(req), wherePesquisa ]})
     .then(pessoas => {
       let resultado = '<html>';
-      resultado = '<h1>Listagem de Contatos</h1>';
+      resultado += '<head>';
+      resultado += '<head><style> table, th, td { border: 1px solid black; border-collapse: collapse; padding: 5px; text-align: left; } * {font-family: Courier New } </style></head>';
+      //resultado += '<link rel="stylesheet" type="text/css" href="main.css">';
+      //resultado += '<link rel="stylesheet" href="./styles/main.css">';
+      resultado += '</head>';
+      resultado += '<body>';
+
+      resultado += '<h3>Listagem de Contatos</h3>';
+      resultado += '<table style="width:100%">';
+      resultado += '<tr><th>Nome</th><th>E-mail</th></tr>';
       resultado += pessoas.map((pessoa) => {
-           return pessoa.nome;
-        }).join('<br>');
-      resultado += '</html>';
-      console.log(resultado);
+           return `<tr><td>${pessoa.nome}</td><td>${pessoa.email}</td></tr>`;
+        }).join('');
+      resultado += '</table></body></html>';
 
       wkhtmltopdf(resultado, {
         output: path+fileName,
