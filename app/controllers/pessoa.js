@@ -25,7 +25,7 @@ rotas.get('/pessoas', (req, res, next) => {
   console.log('pessoas get');
   const wherePesquisa = (req.query.nome) ?
       { [Op.or]: [ {nome: { [Op.like]: `%${req.query.nome}%` }}, {email:  { [Op.like]: `%${req.query.nome}%` } } ] }  : null;
-  req.query.nome;
+  //req.query.nome;
   Pessoa.findAll({
     where: [ whereRegistro(req), wherePesquisa ],
     include: [ { model: Municipio, include: [{ model: Estado }] } ],

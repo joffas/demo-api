@@ -4,6 +4,7 @@ const { serialize } = require('../schemas/application');
 const rotas = express.Router();
 const { Pessoa } = require('../models');
 const { whereRegistro, fileNameTmp } = require('./index.js');
+const { Op } = require('Sequelize');
 
 rotas.get('/reports', (req, res, next) => {
   const path = "D:\\xampp\\htdocs\\";
@@ -12,7 +13,11 @@ rotas.get('/reports', (req, res, next) => {
   var wkhtmltopdf = require('wkhtmltopdf');
   var fs = require("fs");
 
-  Pessoa.findAll({ where: whereRegistro(req) })
+  const wherePesquisa = (req.query.nome) ?
+      { [Op.or]: [ {nome: { [Op.like]: `%${req.query.nome}%` }}, {email:  { [Op.like]: `%${req.query.nome}%` } } ] }  : null;
+  //req.query.nome;
+  Pessoa.findAll({
+    where: [ whereRegistro(req), wherePesquisa ]})
     .then(pessoas => {
       let resultado = '<html>';
       resultado = '<h1>Listagem de Contatos</h1>';
